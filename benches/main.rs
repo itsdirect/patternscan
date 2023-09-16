@@ -1,19 +1,19 @@
 use criterion::{criterion_group, criterion_main, Bencher, Criterion};
 use patternscan::horspool::Horspool;
 use patternscan::naive_search::NaiveSearch;
-use patternscan::pattern::Pattern;
+use patternscan::Pattern;
 
 const PATTERN: &str = "01 01 01 01 01 01 01 01";
 
 fn naive_search(b: &mut Bencher, pattern: &Pattern, data: &[u8]) {
     b.iter(move || {
-        NaiveSearch::new(pattern, data).next().unwrap();
+        pattern.matches::<NaiveSearch>(data).next().unwrap();
     });
 }
 
 fn horspool(b: &mut Bencher, pattern: &Pattern, data: &[u8]) {
     b.iter(move || {
-        Horspool::new(pattern, data).next().unwrap();
+        pattern.matches::<Horspool>(data).next().unwrap();
     });
 }
 

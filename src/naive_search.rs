@@ -1,4 +1,5 @@
 use crate::pattern::Pattern;
+use crate::Searcher;
 
 pub struct NaiveSearch<'a> {
     pattern: &'a Pattern,
@@ -6,8 +7,8 @@ pub struct NaiveSearch<'a> {
     index: usize,
 }
 
-impl<'a> NaiveSearch<'a> {
-    pub fn new(pattern: &'a Pattern, data: &'a [u8]) -> Self {
+impl<'a> Searcher<'a> for NaiveSearch<'a> {
+    fn new(pattern: &'a Pattern, data: &'a [u8]) -> Self {
         Self {
             pattern,
             data,

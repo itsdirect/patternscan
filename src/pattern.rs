@@ -1,6 +1,8 @@
 use std::num::ParseIntError;
 use std::str::FromStr;
 
+use crate::Searcher;
+
 pub struct MaskedByte(pub Option<u8>);
 
 impl FromStr for MaskedByte {
@@ -26,6 +28,12 @@ impl PartialEq<u8> for MaskedByte {
 }
 
 pub struct Pattern(pub Vec<MaskedByte>);
+
+impl<'a> Pattern {
+    pub fn matches<S: Searcher<'a>>(&'a self, data: &'a [u8]) -> S {
+        S::new(self, data)
+    }
+}
 
 impl FromStr for Pattern {
     type Err = ParseIntError;

@@ -1,4 +1,5 @@
 use crate::pattern::{MaskedByte, Pattern};
+use crate::Searcher;
 
 pub struct Horspool<'a> {
     pattern: &'a Pattern,
@@ -7,8 +8,8 @@ pub struct Horspool<'a> {
     index: usize,
 }
 
-impl<'a> Horspool<'a> {
-    pub fn new(pattern: &'a Pattern, data: &'a [u8]) -> Self {
+impl<'a> Searcher<'a> for Horspool<'a> {
+    fn new(pattern: &'a Pattern, data: &'a [u8]) -> Self {
         Self {
             pattern,
             data,
