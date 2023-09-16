@@ -1,7 +1,5 @@
 use criterion::{criterion_group, criterion_main, Bencher, Criterion};
-use patternscan::horspool::Horspool;
-use patternscan::naive_search::NaiveSearch;
-use patternscan::Pattern;
+use patternscan::{Horspool, NaiveSearch, Pattern};
 
 const PATTERN: &str = "01 01 01 01 01 01 01 01";
 
