@@ -3,4 +3,11 @@ name = "patternscan"
 version = "0.1.0"
 edition = "2021"
 
+[[bench]]
+name = "main"
+harness = false
+
+[dev-dependencies]
+criterion = "0.4"
+
 [dependencies]
