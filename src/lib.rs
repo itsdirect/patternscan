@@ -29,20 +29,10 @@ pub struct Pattern(Vec<MaskedByte>);
 
 impl<'a> Pattern {
     pub fn matches(&'a self, data: &'a [u8]) -> Matches {
-        self.matches_with_bounds(data, 0, data.len())
-    }
-
-    pub fn matches_with_bounds(
-        &'a self,
-        data: &'a [u8],
-        front_index: usize,
-        back_index: usize,
-    ) -> Matches {
         Matches {
             pattern: self,
             data,
-            front_index,
-            back_index,
+            index: 0,
         }
     }
 }
@@ -73,40 +63,23 @@ impl PartialEq<[u8]> for Pattern {
 pub struct Matches<'a> {
     pattern: &'a Pattern,
     data: &'a [u8],
-    front_index: usize,
-    back_index: usize,
+    index: usize,
 }
 
 impl Iterator for Matches<'_> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
-        while *self.pattern != self.data[self.front_index..] {
-            if self.front_index == self.back_index {
+        while *self.pattern != self.data[self.index..] {
+            if self.index == self.data.len() {
                 return None;
             }
 
-            self.front_index += 1;
+            self.index += 1;
         }
 
-        let index = self.front_index;
-        self.front_index += self.pattern.0.len();
-        Some(index)
-    }
-}
-
-impl DoubleEndedIterator for Matches<'_> {
-    fn next_back(&mut self) -> Option<Self::Item> {
-        while *self.pattern != self.data[self.back_index..] {
-            if self.back_index == self.front_index {
-                return None;
-            }
-
-            self.back_index -= 1;
-        }
-
-        let index = self.back_index;
-        self.back_index -= self.pattern.0.len();
+        let index = self.index;
+        self.index += self.pattern.0.len();
         Some(index)
     }
 }
