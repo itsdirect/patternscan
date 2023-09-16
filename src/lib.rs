@@ -27,14 +27,14 @@ impl PartialEq<u8> for MaskedByte {
 
 pub struct Pattern(Vec<MaskedByte>);
 
-impl Pattern {
-    pub fn matches(self, data: &[u8]) -> Matches {
+impl<'a> Pattern {
+    pub fn matches(&'a self, data: &'a [u8]) -> Matches {
         self.matches_with_bounds(data, 0, data.len())
     }
 
     pub fn matches_with_bounds(
-        self,
-        data: &[u8],
+        &'a self,
+        data: &'a [u8],
         front_index: usize,
         back_index: usize,
     ) -> Matches {
@@ -71,7 +71,7 @@ impl PartialEq<[u8]> for Pattern {
 }
 
 pub struct Matches<'a> {
-    pattern: Pattern,
+    pattern: &'a Pattern,
     data: &'a [u8],
     front_index: usize,
     back_index: usize,
@@ -81,7 +81,7 @@ impl Iterator for Matches<'_> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
-        while self.pattern != self.data[self.front_index..] {
+        while *self.pattern != self.data[self.front_index..] {
             if self.front_index == self.back_index {
                 return None;
             }
@@ -97,7 +97,7 @@ impl Iterator for Matches<'_> {
 
 impl DoubleEndedIterator for Matches<'_> {
     fn next_back(&mut self) -> Option<Self::Item> {
-        while self.pattern != self.data[self.back_index..] {
+        while *self.pattern != self.data[self.back_index..] {
             if self.back_index == self.front_index {
                 return None;
             }
