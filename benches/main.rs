@@ -5,13 +5,19 @@ const PATTERN: &str = "01 01 01 01 01 01 01 01";
 
 fn naive_search(b: &mut Bencher, pattern: &Pattern, data: &[u8]) {
     b.iter(move || {
-        pattern.matches::<NaiveSearch>(data).next().unwrap();
+        pattern
+            .matches_with_searcher::<NaiveSearch>(data)
+            .next()
+            .unwrap();
     });
 }
 
 fn horspool(b: &mut Bencher, pattern: &Pattern, data: &[u8]) {
     b.iter(move || {
-        pattern.matches::<Horspool>(data).next().unwrap();
+        pattern
+            .matches_with_searcher::<Horspool>(data)
+            .next()
+            .unwrap();
     });
 }
 
