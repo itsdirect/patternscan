@@ -56,7 +56,7 @@ impl PartialEq<[u8]> for Pattern {
             return false;
         }
 
-        self.0.iter().zip(other.iter()).all(|(a, b)| a == b)
+        self.0.iter().zip(other.iter()).rev().all(|(a, b)| a == b)
     }
 }
 
