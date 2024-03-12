@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Bencher, Criterion};
-use patternscan::{Horspool, NaiveSearch, Pattern};
+use patternscan::{Horspool, Memchr, NaiveSearch, Pattern};
 
 const PATTERN: &str = "01 01 01 01 01 01 01 01";
 
@@ -21,6 +21,15 @@ fn horspool(b: &mut Bencher, pattern: &Pattern, data: &[u8]) {
     });
 }
 
+fn memchr(b: &mut Bencher, pattern: &Pattern, data: &[u8]) {
+    b.iter(move || {
+        pattern
+            .matches_with_searcher::<Memchr>(data)
+            .next()
+            .unwrap();
+    });
+}
+
 fn criterion_benchmark(c: &mut Criterion) {
     let mut data = vec![0; 1_000_000];
     let len = data.len();
@@ -29,6 +38,7 @@ fn criterion_benchmark(c: &mut Criterion) {
 
     c.bench_function("naive_search", |b| naive_search(b, &pattern, &data));
     c.bench_function("horspool", |b| horspool(b, &pattern, &data));
+    c.bench_function("memchr", |b| memchr(b, &pattern, &data));
 }
 
 criterion_group!(benches, criterion_benchmark);

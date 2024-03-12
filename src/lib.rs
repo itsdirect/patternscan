@@ -1,8 +1,10 @@
 mod horspool;
+mod memchr;
 mod naive_search;
 mod pattern;
 
 pub use horspool::*;
+pub use memchr::*;
 pub use naive_search::*;
 pub use pattern::*;
 

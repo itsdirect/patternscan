@@ -11,3 +11,4 @@ harness = false
 criterion = "0.4"
 
 [dependencies]
+memchr = "2.7.1"

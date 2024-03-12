@@ -1,7 +1,7 @@
 use std::num::ParseIntError;
 use std::str::FromStr;
 
-use crate::{Horspool, Searcher};
+use crate::{Memchr, Searcher};
 
 pub struct MaskedByte(pub Option<u8>);
 
@@ -30,8 +30,8 @@ impl PartialEq<u8> for MaskedByte {
 pub struct Pattern(pub Vec<MaskedByte>);
 
 impl<'a> Pattern {
-    pub fn matches(&'a self, data: &'a [u8]) -> Horspool {
-        self.matches_with_searcher::<Horspool>(data)
+    pub fn matches(&'a self, data: &'a [u8]) -> impl Searcher {
+        self.matches_with_searcher::<Memchr>(data)
     }
 
     pub fn matches_with_searcher<S: Searcher<'a>>(&'a self, data: &'a [u8]) -> S {
