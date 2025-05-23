@@ -1,6 +1,7 @@
 use std::num::ParseIntError;
 use std::str::FromStr;
 
+#[derive(Debug, PartialEq)]
 pub struct MaskedByte(pub Option<u8>);
 
 impl FromStr for MaskedByte {
@@ -25,6 +26,7 @@ impl PartialEq<u8> for MaskedByte {
     }
 }
 
+#[derive(Debug, PartialEq)]
 pub struct Pattern(pub Vec<MaskedByte>);
 
 impl<'a> Pattern {
@@ -106,5 +108,67 @@ impl Iterator for Matches<'_> {
         }
 
         None
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_pattern_from_str() {
+        assert_eq!(
+            Pattern::from_str("48 8B 05 ? ? ? ? "),
+            Ok(Pattern(vec![
+                MaskedByte(Some(0x48)),
+                MaskedByte(Some(0x8B)),
+                MaskedByte(Some(0x05)),
+                MaskedByte(None),
+                MaskedByte(None),
+                MaskedByte(None),
+                MaskedByte(None),
+            ]))
+        );
+
+        assert_eq!(
+            Pattern::from_str("48 89 84 24 ? 00 00 00"),
+            Ok(Pattern(vec![
+                MaskedByte(Some(0x48)),
+                MaskedByte(Some(0x89)),
+                MaskedByte(Some(0x84)),
+                MaskedByte(Some(0x24)),
+                MaskedByte(None),
+                MaskedByte(Some(0x00)),
+                MaskedByte(Some(0x00)),
+                MaskedByte(Some(0x00)),
+            ]))
+        );
+
+        assert!(matches!(
+            Pattern::from_str("aa bb cc dd ee ff gg hh"),
+            Err(_)
+        ));
+    }
+
+    #[test]
+    fn test_pattern_matches() {
+        let pattern = Pattern::from_str("48 8B 05 ? ? ? ? ").unwrap();
+
+        assert_eq!(
+            pattern
+                .matches(&[
+                    0x01, 0x02, 0x48, 0x8B, 0x05, 0x01, 0x02, 0x03, 0x04, 0x48, 0x8B, 0x05, 0x01,
+                    0x02, 0x03, 0x04, 0x48, 0x8B, 0x05, 0x01, 0x02, 0x03, 0x04
+                ])
+                .collect::<Vec<_>>(),
+            [2, 9, 16]
+        );
+
+        assert_eq!(
+            pattern
+                .matches(&[0x01, 0x02, 0x46, 0x8B, 0x05, 0x01, 0x02, 0x03, 0x04])
+                .collect::<Vec<_>>(),
+            []
+        );
     }
 }
